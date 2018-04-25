@@ -1,7 +1,7 @@
-# Voxnet_lidar
-An on going TF implementation on Voxnet to deal with LiDAR pointcloud.
+## VoxNet: A 3D Convolutional Neural Network for Real-Time Object Recognition
 
-## Reference Paper
+　An on going TF implementation on VoxNet to deal with 3D LiDAR pointcloud segmentation classification, refer to [paper](https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf).
+
 ```bibtex
 @inproceedings{Maturana2015VoxNet,
   title={VoxNet: A 3D Convolutional Neural Network for real-time object recognition},
@@ -12,7 +12,7 @@ An on going TF implementation on Voxnet to deal with LiDAR pointcloud.
 }
 ```
 
-## Dataset
+### Dataset
 [Sydney Urban Object Dataset, short for SUOD](http://www.acfr.usyd.edu.au/papers/SydneyUrbanObjectsDataset.shtml)
 
 
@@ -22,11 +22,11 @@ An on going TF implementation on Voxnet to deal with LiDAR pointcloud.
 [Semantic 3D](http://www.semantic3d.net/view_dbase.php?chl=2) 
 
 
-## Requirement
+### Requirement
 1. [python-pcl](https://github.com/strawlab/python-pcl)
 2. [Tensorflow](https://github.com/tensorflow/tensorflow)
 
-## Running
+### Running
 ```bash
 # converting SUOD bin files to pcd and saving centerlized and rotation augmented voxels in `{name}_{rotate_step}.npy`
 python read-bin.py
@@ -34,7 +34,7 @@ python read-bin.py
 python voxnet.py
 ```
 
-## Experiment
+### Experiment
 The current model is trained by folder[1-3], and evaluated on folder[4] with resolution `0.2m`, batch size `32` and epoch `8`. And it achieves F1-score at `0.73433015006` for SUOD with only data aumentation rather than other voting technique. The loss is shown as follows:
 ```CSV
 Wall	time	      Step	  Value
@@ -53,7 +53,7 @@ Wall	time	      Step	  Value
 1508396624.6835	  1201	0.0039639813
 ```
 
-## Current Issue
+### Current Issue
 1. Dataset path needs to be modified in `*.py`
 2. The training step is really slow, about 44s. It needs to check implementation of Voxnet architecture.
 3. Some folder need to be created before running(e.g., lacking path checker and mkdir in the script)

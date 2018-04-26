@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-  Voxnet implementation on tensorflow
+  Voxnet implementation using tensorflow Estimator
 """
 
 import tensorflow as tf

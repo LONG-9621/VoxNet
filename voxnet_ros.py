@@ -35,7 +35,7 @@ if __name__ == '__main__':
         pc2_pub = rospy.Publisher('/voxnet/points_l', pc2, queue_size=10)
         
         # Subscriber
-        rospy.Subscriber('/velodyne_points',Imu,on_new_imu)
+        rospy.Subscriber('/velodyne_points', Imu, on_new_imu)
 
 
         rospy.spin()

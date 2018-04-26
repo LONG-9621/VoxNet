@@ -34,6 +34,27 @@ python read-bin.py
 python voxnet.py
 ```
 
+### Training/Validation
+```bash
+$ workon py3-1.3.0
+(py3-1.3.0) $ ./scripts/train.sh
+...
+Start training...
+...
+INFO:tensorflow:loss = 0.004891032, step = 208 (7.759 sec)
+INFO:tensorflow:Saving checkpoints for 214 into ./logs/model.ckpt.
+INFO:tensorflow:Loss for final step: 0.007142953.
+Finished training.
+Start testing...
+INFO:tensorflow:Starting evaluation at 2018-04-26-03:29:16
+2018-04-26 11:29:16.387119: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:0) -> (device: 0, name: GeForce 940MX, pci bus id: 0000:01:00.0)
+INFO:tensorflow:Restoring parameters from ./logs/model.ckpt-214
+INFO:tensorflow:Finished evaluation at 2018-04-26-03:29:16
+INFO:tensorflow:Saving dict for global step 214: accuracy = 0.64666665, global_step = 214, loss = 2.4514768
+Finished testing.
+You can use Tensorboard to visualize the results by command 'tensorboard --logdir=./logs'.
+```
+
 ### Experiment
 The current model is trained by folder[1-3], and evaluated on folder[4] with resolution `0.2m`, batch size `32` and epoch `8`. And it achieves F1-score at `0.73433015006` for SUOD with only data aumentation rather than other voting technique. The loss is shown as follows:
 ```CSV

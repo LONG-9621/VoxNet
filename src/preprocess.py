@@ -47,42 +47,34 @@ if __name__=='__main__':
         for file in file_list:
             file_name = file.split('\n')[0]
             file_path = data_dir + file_name
-            cloud = helper.load_points_from_bin(file_path)
-            voxels, inside_points = helper.voxelize(cloud)
-
-            if FLAGS.visualize:
-                viewer.plot3DVoxel(voxels)
-
             print('processsing {}'.format(file_name))
 
-            # steps = 12
-            # voxel_list, scale_points_list = data_augmentation(points=P,rot_step=steps,resolution=0.2)
-            # print P.shape
-            # print voxel.shape,scale_points.shape
-            # all_cnt += steps #all_cnt+=1
+            cloud = helper.load_points_from_bin(file_path)
 
-            # save pointcloud to *.pcd
-            # if P.shape[0]>0:
-            #     cloud=pcl.PointCloud(P) # P should be type: float
-            #     # pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
-            #     #pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
+            aug_steps = 12
+            cloud_list = helper.aug_data(cloud, aug_steps)
 
-            # save filterred pointcloud and voxel
+            # save pre-process pointcloud voxel
+            idx = 0
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir, exist_ok=True)
 
-            idx = 0
-            # for voxel, scale_points in zip(voxel_list,scale_points_list):
-            #     idx+=1
-            #     if scale_points.shape[0]>0:
-            #         success_cnt+=1
-            #         cloud=pcl.PointCloud(scale_points.astype(np.float32))
-            #         pcl.save(cloud,'./preprocess/pcd_voxel2_r2/{}_{}.pcd'.format(file_name.split('.bin')[0],idx))
-            #         np.save('./preprocess/voxel_npy_eval_r2/{}_{}.npy'.format(file_name.split('.bin')[0],idx),voxel)
-            #     else:
-            #         print ('processed {} is empty'.format(file_name))
-            if inside_points.shape[0] > 0:
-                save_name = '{}/{}_{}.npy'.format(save_dir, file_name.split('.bin')[0], idx)
-                np.save(save_name, voxels)
+            for points in cloud_list:
+                voxels, inside_points = \
+                    helper.voxelize(points, voxel_size=(24,24,24), padding_size=(32,32,32), resolution=0.1)
 
-                print('saved. {}'.format(file_name))
+                if FLAGS.visualize:
+                    viewer.plot3DVoxel(voxels)
+
+                # save pointcloud to *.pcd
+                # if P.shape[0]>0:
+                #     cloud=pcl.PointCloud(P) # P should be type: float
+                #     # pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
+                #     #pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
+
+                if inside_points.shape[0] > 0:
+                    save_name = '{}/{}_{}.npy'.format(save_dir, file_name.split('.bin')[0], idx)
+                    np.save(save_name, voxels)
+
+                    print('saved. {}'.format(save_name))
+                    idx += 1

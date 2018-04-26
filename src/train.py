@@ -54,24 +54,24 @@ def train(argv=None):
         shuffle=True
     )
 
-    print('start training...')
+    print('Start training...')
     voxel_classifier.train(
         input_fn=train_input_fn,
         steps=5000,
         hooks=[logging_hook]
     )
-    print('finished training.')
+    print('Finished training.')
 
     # Evaluate the model and print results
-    print('start testing...')
+    print('Start testing...')
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"OccuGrid_input": voxels_testing},
         y=labels_testing,
         num_epochs=1,
         shuffle=False)
     testing_results = voxel_classifier.evaluate(input_fn=eval_input_fn)
-    print('finished testing.')
-    print(testing_results)
+    print('Finished testing.')
+    print("You can use Tensorboard to visualize the results by command 'tensorboard --logdir={}'.".format(FLAGS.log_dir))
 
 if __name__ == '__main__':
     # delete old logs

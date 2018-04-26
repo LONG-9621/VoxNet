@@ -10,3 +10,6 @@ __pycache__/
 .idea/
 cmake-build-debug/
 CMakeLists.txt
+
+logs/
+data/

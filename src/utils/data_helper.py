@@ -169,11 +169,13 @@ def point_transform(points, tx, ty, tz, rx=0, ry=0, rz=0):
 
 def aug_data(points, aug_size):
     """
+    Object segments data augmentation, translation as well as rotation refer to VoxelNet
 
     :param points:
     :param aug_size:
     :return:
     """
+    np.random.seed()
 
     points_list = [points]
     for idx in range(aug_size):

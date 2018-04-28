@@ -65,7 +65,7 @@ done
 
 # prepare training set & testing set
 python ./src/preprocess.py \
-  --clear_cache True
+  --clear_cache
 python ./src/preprocess.py \
   --fold 1
 python ./src/preprocess.py \

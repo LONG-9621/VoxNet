@@ -3,9 +3,11 @@
 
 """ Simple example for loading object binary data. """
 
+import os
+
 import numpy as np
 import tensorflow as tf
-import os
+import pcl
 
 import utils.data_helper as helper
 import utils.visualization as viewer
@@ -19,8 +21,11 @@ tf.app.flags.DEFINE_integer(
     'fold', 0,
     """which fold, 0..3, for SUOD.""")
 tf.app.flags.DEFINE_bool(
-    'visualize', False,
+    'viz', False,
     """visualize preprocess voxelization.""")
+tf.app.flags.DEFINE_bool(
+    'pcd', False,
+    """save object point cloud as pcd.""")
 tf.app.flags.DEFINE_string(
     'npy_dir', './data/datasets/npy_generated',
     """directory to stores the SUOD preprocess results, including occupancy grid and label.""")
@@ -34,9 +39,9 @@ tf.app.flags.DEFINE_string(
 if __name__=='__main__':
     # delete old generated npy
     if FLAGS.clear_cache:
-        if tf.gfile.Exists(FLAGS.npy_dir):
-            tf.gfile.DeleteRecursively(FLAGS.npy_dir)
-        tf.gfile.MakeDirs(FLAGS.npy_dir)
+        if os.path.exists(FLAGS.npy_dir):
+            os.system('rm -rf {}'.format(FLAGS.npy_dir))
+        os.makedirs(FLAGS.npy_dir, exist_ok=True)
 
     dataset_file = FLAGS.dataset_dir + '/folds/fold{}.txt'.format(FLAGS.fold)
 
@@ -51,8 +56,11 @@ if __name__=='__main__':
 
             cloud = helper.load_points_from_bin(file_path)
 
+            # 12 perform better than 18
             aug_steps = 12
+            # VoxelNet data augmentation make VoxNet perform better accuracy = 0.6762148 > 0.6769073
             cloud_list = helper.aug_data(cloud, aug_steps)
+            # cloud_list = helper.aug_data(cloud, aug_steps, uniform_rotate_only=True)
 
             # save pre-process pointcloud voxel
             idx = 0
@@ -63,18 +71,20 @@ if __name__=='__main__':
                 voxels, inside_points = \
                     helper.voxelize(points, voxel_size=(24,24,24), padding_size=(32,32,32), resolution=0.1)
 
-                if FLAGS.visualize:
+                if FLAGS.viz:
                     viewer.plot3DVoxel(voxels)
 
                 # save pointcloud to *.pcd
-                # if P.shape[0]>0:
-                #     cloud=pcl.PointCloud(P) # P should be type: float
-                #     # pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
-                #     #pcl.save(cloud,'./pcd/{}.pcd'.format(file_name.split('.bin')[0]))
+                if FLAGS.pcd:
+                    if inside_points.shape[0] > 0:
+                        pc = pcl.PointCloud(points)
+                        pcd_name = '{}/{}_{}.pcd'.format(save_dir, file_name.split('.bin')[0], idx)
+                        pcl.save(pc, pcd_name)
+                        print('saved pcd. {}'.format(pcd_name))
 
                 if inside_points.shape[0] > 0:
                     save_name = '{}/{}_{}.npy'.format(save_dir, file_name.split('.bin')[0], idx)
                     np.save(save_name, voxels)
 
-                    print('saved. {}'.format(save_name))
+                    print('saved npy. {}'.format(save_name))
                     idx += 1

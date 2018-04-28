@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-  Voxnet implementation on tensorflow
+  Voxnet training
 """
 
 import tensorflow as tf
@@ -38,9 +38,6 @@ def train(argv=None):
     # Trainning data collector
     voxels, labels = helper.load_data_from_npy(FLAGS.npy_dir, mode='training')
 
-    # Evaluating data collector
-    voxels_testing, labels_testing = helper.load_data_from_npy(FLAGS.npy_dir, mode='testing')
-
     # Set up logging for predictions
     log = {"probabilities": "softmax_tensor"}
     logging_hook = tf.train.LoggingTensorHook(tensors=log, every_n_iter=10)
@@ -54,24 +51,15 @@ def train(argv=None):
         shuffle=True
     )
 
-    print('Start training...')
+    print("You can use Tensorboard to visualize the results by command 'tensorboard --logdir={}'.".format(FLAGS.log_dir))
+    input("Press Enter to Start training...")
+
     voxel_classifier.train(
         input_fn=train_input_fn,
         steps=5000,
         hooks=[logging_hook]
     )
     print('Finished training.')
-
-    # Evaluate the model and print results
-    print('Start testing...')
-    eval_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={"OccuGrid_input": voxels_testing},
-        y=labels_testing,
-        num_epochs=1,
-        shuffle=False)
-    testing_results = voxel_classifier.evaluate(input_fn=eval_input_fn)
-    print('Finished testing.')
-    print("You can use Tensorboard to visualize the results by command 'tensorboard --logdir={}'.".format(FLAGS.log_dir))
 
 if __name__ == '__main__':
     # delete old logs
